@@ -20,8 +20,8 @@ import com.example.model.AppendixCITES;
 @RequestMapping("/cites")
 public class CitesController {
 	private RestTemplate rest=new RestTemplate();
-	private String url="http://localhost:8082";
-	//private String url="https://da-server2-production.up.railway.app";
+	//private String url="http://localhost:8082";
+	private String url="https://server-production-004b.up.railway.app";
 	@GetMapping
 	private String get(@RequestParam(name="key", defaultValue = "", required = false)String key, HttpSession session, Model model) {
 		List<AppendixCITES>cites=Arrays.asList(rest.getForObject(url+"/cites/get?key="+key, AppendixCITES[].class));
