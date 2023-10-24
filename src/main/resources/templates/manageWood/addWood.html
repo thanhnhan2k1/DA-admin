@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>SB Admin 2 - Dashboard</title>
+
+<!-- Custom fonts for this template-->
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link
+	href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+	rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+<link th:href="@{/css/style.css}" rel="stylesheet">
+<script type="text/javascript" th:src="@{/js/multiselect-dropdown.js}"></script>
+<script
+	src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Sidebar -->
+		<div th:replace="sidebar :: fsidebar"></div>
+		<!-- End of Sidebar -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+				<div th:replace="topbar :: ftopbar"></div>
+				<!-- End of Topbar -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<h4 class="mb-2 text-gray-800">
+						Loài gỗ
+						</h5>
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/}">Loài gỗ</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Thêm</li>
+							</ol>
+						</nav>
+
+						<form th:action="@{/wood/save}" method="post" id="f2" enctype="multipart/form-data">
+							<div style="padding-right: 40%;">
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Danh mục gỗ: </label>
+									<div class="col-sm-9">
+										<select class="form-control" aria-label="Default select example" name="category">
+											<option th:each="i, itr:${session.listCateWood}" th:value="${itr.index}" th:text="${i.name}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="staticEmail" class="col-sm-3 col-form-label">Tên tiếng việt</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="vietnamese" >
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Tên khoa học</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="scientificName" required>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Tên thương mại</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="commercialName" required>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Khối lượng riêng</label>
+									<div class="col-sm-9">
+										<input type="number" class="form-control" name="specificGravity" th:value="0">
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Màu sắc</label>
+									<div class="col-sm-9">
+										<textarea type="text" class="form-control" name="color" required></textarea>
+									</div>
+								</div>
+
+
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Ghi chú</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="note">
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Phân bố tự nhiên</label>
+									<div class="col-sm-9">
+										<select name="area" class="form-control" multiple style="width: 100%; max-width: 100%"
+											multiselect-search="true" multiselect-select-all="true" multiselect-max-items="30" required>
+											<option th:each="i, itr:${session.areas}" th:value="${itr.index}" th:text="${i.english}"></option>
+										</select>
+									</div>
+								</div>
+
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Phân loại CITES</label>
+									<div class="col-sm-9">
+										<select class="form-control" aria-label="Default select example" name="cite">
+											<option th:each="i, itr:${session.cites}" th:value="${itr.index}" th:text="${i.name}"></option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Chọn ảnh minh họa</label>
+									<div class="col-sm-9">
+										<input type="file" id="file-input" name="image" accept="image/png, image/jpeg" onchange="preview()" required>
+										<p id="num-of-files">Chọn ảnh mặt cắt dọc nhìn bằng mắt thường</p>
+										<div id="images">
+										</div>
+									</div>
+								</div>
+								<script type="text/javascript">
+									function preview(){
+										let fileInput=document.getElementById("file-input");
+										let imageContainer=document.getElementById("images");
+										imageContainer.innerHTML="";
+										let reader=new FileReader();
+										let figure=document.createElement("figure");
+										let figCap=document.createElement("figcaption");
+										figCap.innerText=fileInput.files[0].name;
+										figure.appendChild(figCap);
+										reader.onload=()=>{
+											let img=document.createElement("img");
+											let span=document.createElement("span");
+											span.innerHTML="&times";
+											span.setAttribute("onclick","deleteItem()");
+											img.setAttribute("src",reader.result);
+											figure.insertBefore(img, figCap);
+											figure.insertBefore(span, img);
+										}
+										imageContainer.appendChild(figure);
+										reader.readAsDataURL(fileInput.files[0]);
+									}
+									function deleteItem(){
+										let fileInput=document.getElementById("file-input");
+										let imageContainer=document.getElementById("images");
+										fileInput.value=null;
+										imageContainer.innerHTML="";
+									}
+									function preview2(){
+										let fileInput2=document.getElementById("file-input12");
+										let imageContainer2=document.getElementById("images12");
+										imageContainer2.innerHTML="";
+										let reader=new FileReader();
+										let figure=document.createElement("figure");
+										let figCap=document.createElement("figcaption");
+										figCap.innerText=fileInput2.files[0].name;
+										figure.appendChild(figCap);
+										reader.onload=()=>{
+											let img=document.createElement("img");
+											let span=document.createElement("span");
+											span.innerHTML="&times";
+											span.setAttribute("onclick","deleteItem2()");
+											img.setAttribute("src",reader.result);
+											figure.insertBefore(img, figCap);
+											figure.insertBefore(span, img);
+										}
+										imageContainer2.appendChild(figure);
+										reader.readAsDataURL(fileInput2.files[0]);
+									}
+									function deleteItem2(){
+										let fileInput2=document.getElementById("file-input12");
+										let imageContainer2=document.getElementById("images12");
+										fileInput2.value=null;
+										imageContainer2.innerHTML="";
+									}
+									function preview3(){
+										let fileInput2=document.getElementById("file-input13");
+										let imageContainer2=document.getElementById("images13");
+										imageContainer2.innerHTML="";
+										let reader=new FileReader();
+										let figure=document.createElement("figure");
+										let figCap=document.createElement("figcaption");
+										figCap.innerText=fileInput2.files[0].name;
+										figure.appendChild(figCap);
+										reader.onload=()=>{
+											let img=document.createElement("img");
+											let span=document.createElement("span");
+											span.innerHTML="&times";
+											span.setAttribute("onclick","deleteItem3()");
+											img.setAttribute("src",reader.result);
+											figure.insertBefore(img, figCap);
+											figure.insertBefore(span, img);
+										}
+										imageContainer2.appendChild(figure);
+										reader.readAsDataURL(fileInput2.files[0]);
+									}
+									function deleteItem3(){
+										let fileInput2=document.getElementById("file-input13");
+										let imageContainer2=document.getElementById("images13");
+										fileInput2.value=null;
+										imageContainer2.innerHTML="";
+									}
+								</script>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9 ">
+										<input type="file" id="file-input12" name="image" accept="image/png, image/jpeg" onchange="preview2()" required>
+										<p id="num-of-files">Chọn ảnh mặt cắt ngang nhìn bằng mắt thường</p>
+										<div id="images12">
+										</div>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9 ">
+										<input type="file" id="file-input13" name="image" accept="image/png, image/jpeg" onchange="preview3()" required>
+										<p id="num-of-files">Mặt cắt ngang nhìn dưới kính lúp 24x</p>
+										<div id="images13">
+										</div>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Xếp loại trong danh sách đỏ</label>
+									<div class="col-sm-9">
+										<select class="form-control" aria-label="Default select example" name="preservation">
+											<option th:each="i, itr:${session.listPre}" th:value="${itr.index}" th:text="${i.vietnamese}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Họ thực vật</label>
+									<div class="col-sm-9">
+										<select class="form-control" aria-label="Default select example" name="family">
+											<option th:each="i, itr:${session.listFamily}" th:value="${itr.index}" th:text="${i.vietnamese}"></option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="mb-3 row">
+									<label for="inputPassword" class="col-sm-3 col-form-label">Đặc điểm cấu tạo thô đại của gỗ</label>
+									<div class="col-sm-9" style="width: 70%;">
+										<textarea id="editor" name="character"></textarea>
+										<script>
+					                        ClassicEditor
+					                                .create( document.querySelector( '#editor' ) )
+					                                .then( editor => {
+					                                        console.log( editor );
+					                                } )
+					                                .catch( error => {
+					                                        console.error( error );
+					                                } );
+					                </script>
+									</div>
+								</div>
+						
+						<div class="mb-3 row">
+							<div class="col-sm-3"></div>
+							<div class="col-sm-9">
+								<div class="row">
+									<button class="col-sm-3" type="submit"
+										style="border-width: 2px; border-radius: 4px; background: #105378; border-color: #105378; margin-left: 10px; color: white;">Lưu</button>
+									<div class="col-sm-3"></div>
+									<button class="col-sm-3"
+										style="border-width: 2px; border-radius: 4px; background: #105378; border-color: #105378">
+										<a th:href="@{/family/add}" style="color: white;">Quay lại</a>
+									</button>
+								</div>
+							</div>
+						</div>
+						</form>
+				</div>
+
+			</div>
+			<!-- /.container-fluid -->
+
+		</div>
+		<!-- End of Main Content -->
+
+		<!-- Footer -->
+		<footer class="sticky-footer bg-white">
+			<div class="container my-auto">
+				<div class="copyright text-center my-auto">
+					<span>Copyright &copy; Your Website 2021</span>
+				</div>
+			</div>
+		</footer>
+		<!-- End of Footer -->
+
+	</div>
+	<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+	<div th:if="${result=='fail'}">
+    	<script >
+    		alert("Cập nhật không thành công");
+    	</script>
+    </div>
+    <div th:if="${result=='success'}">
+    	<script >
+    		alert("Cập nhật thành công");
+    		var s="/wood";
+    		window.location.href=s;
+    	</script>
+    </div>
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- Logout Modal-->
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+					<button class="close" type="button" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Select "Logout" below if you are ready
+					to end your current session.</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button"
+						data-dismiss="modal">Cancel</button>
+					<a class="btn btn-primary" href="login.html">Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+	<!-- Page level plugins -->
+	<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+
+	<!-- Page level custom scripts -->
+	<script th:src="@{/js/demo/chart-area-demo.js}"></script>
+	<script th:src="@{/js/demo/chart-pie-demo.js}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<title>SB Admin 2 - Tables</title>
+	
+	<!-- Custom fonts for this template -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+	<link
+		href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+		rel="stylesheet">
+	
+	<!-- Custom styles for this template -->
+	<link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+	
+	<!-- Custom styles for this page -->
+	<link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Sidebar -->
+		<div th:replace="sidebar :: fsidebar"></div>
+		<!-- End of Sidebar -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Topbar -->
+				<div th:replace="topbar :: ftopbar"></div>
+				<!-- End of Topbar -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+
+					<!-- Page Heading -->
+					<h4 class="mb-2 text-gray-800">Thống kê hóa đơn</h5>
+					<nav aria-label="breadcrumb">
+					  <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Danh sách hóa đơn</li>
+					  </ol>
+					</nav>
+					<form th:action="@{/stat/getListUsedServiceLoc}" method="get">
+			            <table border="0">
+			                
+			                <tr>
+			                    <td>Tình trạng</td>
+			                    <td>
+				                    <select name="status">
+										<option th:value="SUCCESS">Thành công</option>
+										<option th:value="PENDING">Chưa thanh toán</option>
+									</select>
+								</td>
+			                </tr>
+			                <tr>
+			                    <td></td>
+			                    <td><input type="submit" value="Xem"/></td>
+			                </tr>
+			                
+			            </table> 
+					</form>
+					<div class="card shadow mb-4">
+							<div class="card-body">
+								<div class="table-responsive">
+									<div id="dataTable_wrapper"
+										class="dataTables_wrapper dt-bootstrap4">
+										<table class="table table-bordered dataTable" id="dataTable"
+											width="100%" cellspacing="0" role="grid"
+											aria-describedby="dataTable_info" style="width: 100%;">
+											<thead>
+												<tr role="row">
+													<th>Tên dịch vụ</th>
+													<th>Ngày bắt đầu</th>
+													<th>Ngày kết thúc</th>
+													<th>Phương thức thanh toán</th>
+													<th>Người đăng kí</th>
+													<th>Trạng thái</th>
+												</tr>
+											</thead>
+											
+											<tbody>
+												<tr th:each="i, itr:${session.listUs}">
+													<td th:text="${i.service.name}"></td>
+													<td th:text="${#dates.format(i.dateStart,'dd-MM-yyyy HH:mm:ss')}"></td>
+													<td th:text="${#dates.format(i.dateEnd,'dd-MM-yyyy HH:mm:ss')}"></td>
+													<td th:text=${i.typePayment}></td>
+													<td th:text=${i.status}></td>
+													<td th:text=${i.user.name}></td>
+												</tr>
+											</tbody>
+											
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Footer -->
+			<footer class="sticky-footer bg-white">
+				<div class="container my-auto">
+					<div class="copyright text-center my-auto">
+						<span>Copyright &copy; Your Website 2020</span>
+					</div>
+				</div>
+			</footer>
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- Scroll to Top Button-->
+	<a class="scroll-to-top rounded" href="#page-top"> <i
+		class="fas fa-angle-up"></i>
+	</a>
+
+	<!-- Logout Modal-->
+	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+					<button class="close" type="button" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Select "Logout" below if you are ready
+					to end your current session.</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button"
+						data-dismiss="modal">Cancel</button>
+					<a class="btn btn-primary" href="login.html">Logout</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+	<!-- Core plugin JavaScript-->
+	<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{/js/sb-admin-2.min.js}"></script>
+	<script th:src="@{/js/demo/datatables-demo.js}"></script>
+</body>
+
+</html>

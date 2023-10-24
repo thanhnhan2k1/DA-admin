@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/summernote/summernote-bs4.min.css}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+
+<body id="page-top">
+
+    <div id="wrapper">
+        <div th:replace="sidebar :: fsidebar"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div th:replace="topbar :: ftopbar"></div>
+                <div class="container-fluid">
+					<h4 class="mb-2 text-gray-800">Quản lý bài viết</h5>
+					<nav aria-label="breadcrumb">
+					  <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+					    <li class="breadcrumb-item"><a th:href="@{/blog}">Bài viết</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Thêm blog</li>
+					  </ol>
+					</nav>
+				</div>
+				
+				<div class="card-body">
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+		
+		          <form th:action="@{/blog/edit}" method="post" enctype="multipart/form-data" id="f1">
+		            <input type="hidden" name="statusimg" id="statusimg" th:value="0">
+		            <div class="form-group">
+		              <label for="title" style="font-weight: 700">Tên bài viết:</label>
+		              <input type="text" class="form-control" id="title" placeholder="Title" name="title" th:value="${session.blog.title}">
+		            </div>
+		            <div class="form-group">
+		              <label for="title" style="font-weight: 700">Tác giả:</label>
+		              <input type="text" class="form-control" id="author" placeholder="tác giả" name="author" th:value="${session.blog.author}">
+		            </div>
+		            <div class="form-group">
+		            	<label for="title" style="font-weight: 700">Nội dung:</label>
+		                  <textarea id="summernote" name="content" th:text="${session.blog.content}"></textarea>
+		            </div>
+		                <div class="form-group">
+			                  <label for="status_id" style="font-weight: 700">Danh mục</label>
+			                  <select name="category" class="form-control">
+			                    <option th:each="i,itr:${session.listCate}" th:text="${i.name}" th:value="${itr.index}"></option>
+			                  </select>
+		                </div>
+		                
+		                <div class="form-group">
+			                  <label for="metakeywords" style="font-weight: 700">Nội dung tóm tắt</label>
+			                  <textarea placeholder="Nội dung tóm tắt" name="precontent" class="form-control" rows="5" th:text="${session.blog.precontent}"></textarea>
+		                </div>
+		                <div class="form-group">
+			                  <label for="image" style="font-weight: 700">Chọn ảnh đại diện</label>
+			                  <input type="file" name="image" id="file-input" class="form-control" onchange="preview()"/>
+		                </div>
+		                <div class="col-sm-10 image-input">
+										<p id="num-of-files">Chọn 1 ảnh minh họa</p>
+										<div id="images">
+											<figure th:if="${session.blog.image!=null}">
+												<span onclick="deleteItem()">&times</span>
+												<img alt="" th:src="${session.blog.image}" >
+											</figure>
+										</div>
+									</div>
+						<script type="text/javascript">
+									
+									function preview(){
+										let fileInput=document.getElementById("file-input");
+										let imageContainer=document.getElementById("images");
+										imageContainer.innerHTML="";
+										let reader=new FileReader();
+										let figure=document.createElement("figure");
+										let figCap=document.createElement("figcaption");
+										figCap.innerText=fileInput.files[0].name;
+										figure.appendChild(figCap);
+										reader.onload=()=>{
+											let img=document.createElement("img");
+											let span=document.createElement("span");
+											span.innerHTML="&times";
+											span.setAttribute("onclick","deleteItem()");
+											img.setAttribute("src",reader.result);
+											figure.insertBefore(img, figCap);
+											figure.insertBefore(span, img);
+										}
+										imageContainer.appendChild(figure);
+										reader.readAsDataURL(fileInput.files[0]);
+									}
+									function deleteItem(){
+										let fileInput=document.getElementById("file-input");
+										let status=document.getElementById("statusimg");
+										status.setAttribute("value","1");
+										let imageContainer=document.getElementById("images");
+										fileInput.value=null;
+										imageContainer.innerHTML="";
+									}
+							</script>
+		                <input type="hidden" name="status" id="status">
+		                <div class="form-group">
+			                  <button th:if="${session.status=='draft'}" onclick="submitForm('draft')" class="btn btn-primary">Lưu bản nháp</button>
+			                  
+			                  <button onclick="submitForm('publish')" class="btn btn-primary">Publish</button>
+		            	</div>
+		          </form>
+		
+		        </div>		
+		        </div>
+            </div>
+            <script type="text/javascript">
+            	function submitForm(s){
+            		$("#status").val(s);
+            		document.getElementById('f1').submit();
+            	}
+            </script>
+          
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2021</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <div th:if="${result=='fail'}">
+    	<script >
+    		alert("Thêm không thành công");
+    	</script>
+    </div>
+    <div th:if="${result=='success'}">
+    	<script >
+    		alert("Thêm thành công");
+    		var s="/blog?status="+"[[${session.status}]]";
+    		window.location.href=s;
+    	</script>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/summernote/summernote-bs4.min.js}"></script>
+	<script>
+		$(function() {
+			// Summernote
+			$('#summernote').summernote({
+				
+			    //Your classic summernote code here
+			    
+			    //Define the callback
+			    callbacks: {
+			    	onImageUpload: function(files) {
+			    		for(i of files){
+			    			let data = new FormData();
+						    data.append("file", i);
+						    alert(files[0]);
+						    $.ajax({
+						        data: data,
+						        type: "POST",
+						        url: "http://localhost:8082/upload/saveFile", //Your own back-end uploader
+						        cache: false,
+						        contentType: false,
+						        processData: false,
+						        xhr: function() { //Handle progress upload
+						            let myXhr = $.ajaxSettings.xhr();
+						            if (myXhr.upload) myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+						            return myXhr;
+						        },
+						        success: function(reponse) {
+						                let listMimeImg = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg'];
+						                let listMimeAudio = ['audio/mpeg', 'audio/ogg'];
+						                let listMimeVideo = ['video/mpeg', 'video/mp4', 'video/webm'];
+						                let elem;
+
+						                    //Picture
+						                   	elem = document.createElement("img");
+	                    					elem.setAttribute("src", reponse);
+						                    $('#summernote').summernote('editor.insertNode', elem);
+						                    //$summernote.summernote('editor.insertNode', imgNode);
+						        }
+						    });
+			    		}
+					    
+			        },
+				  }
+			        
+			});
+			
+			function myOwnCallBack(file) {
+				
+			}
+			function progressHandlingFunction(e) {
+			    if (e.lengthComputable) {
+			        //Log current progress
+			        console.log((e.loaded / e.total * 100) + '%');
+
+			        //Reset progress on complete
+			        if (e.loaded === e.total) {
+			            console.log("Upload finished.");
+			        }
+			    }
+			}
+		})
+	</script>
+</body>
+
+</html>
